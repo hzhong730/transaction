@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>All Transactions</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transactions List</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Counterparty 1</th>
+            <th>Counterparty 2</th>
+            <th>Product ID</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Amount</th>
+            <th>Direction</th>
+            <th>Created On</th>
+            <th>Updated On</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="trade : ${transaction}">
+            <td th:text="${trade.tradeID}"></td>
+            <td th:text="${trade.counterParty1}"></td>
+            <td th:text="${trade.counterParty2}"></td>
+            <td th:text="${trade.productId}"></td>
+            <td th:text="${trade.type}"></td>
+            <td th:text="${trade.price}"></td>
+            <td th:text="${trade.amount}"></td>
+            <td th:text="${trade.direction}"></td>
+            <td th:text="${trade.createdOn}"></td>
+            <td th:text="${trade.updatedOn}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
