@@ -87,11 +87,7 @@ public class TransactionRepository implements TransactionRepositoryInterface {
     private void updateInDB(TransactionDTO data) {
         TransactionDTO dataInDB = getActiveData(data.getTradeID());
         if (null == dataInDB) {
-            String msg = String.format("Transaction %s doesn't exist in DB", data.getTradeID());
-            throw new RuntimeException(msg);
-        }
-        if (dataInDB.isDeleted()) {
-            String msg = String.format("Transaction %s is deleted", data.getTradeID());
+            String msg = String.format("Transaction %s doesn't exist or it's deleted", data.getTradeID());
             throw new RuntimeException(msg);
         }
         dataInDB.setLatest(false);
@@ -108,11 +104,7 @@ public class TransactionRepository implements TransactionRepositoryInterface {
     public void delete(String tradeId) {
         TransactionDTO dataInDB = getActiveData(tradeId);
         if (null == dataInDB) {
-            String msg = String.format("Transaction %s doesn't exist in DB", tradeId);
-            throw new RuntimeException(msg);
-        }
-        if (dataInDB.isDeleted()) {
-            String msg = String.format("Transaction %s is already deleted", tradeId);
+            String msg = String.format("Transaction %s doesn't exist in DB or is already deleted", tradeId);
             throw new RuntimeException(msg);
         }
         dataInDB.setLatest(false);
