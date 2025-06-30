@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @Service
 public class TransactionCacheService {
@@ -61,7 +62,7 @@ public class TransactionCacheService {
         if (customersTradeCache.containsKey(customer)) {
             customersTradeCache.get(customer).add(tradeId);
         } else {
-            Set<String> tradeIds = new HashSet<>();
+            Set<String> tradeIds = new CopyOnWriteArraySet<>();
             tradeIds.add(tradeId);
             customersTradeCache.put(customer, tradeIds);
         }

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  transaction:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=dev
+    volumes:
+      - .:/app
+    command: ["mvn", "spring-boot:run"]
