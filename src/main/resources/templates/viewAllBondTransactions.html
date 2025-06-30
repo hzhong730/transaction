@@ -35,7 +35,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="trade : ${transaction}">
+        <tr th:each="trade : ${pageInfo.data}">
             <td th:text="${trade.tradeID}"></td>
             <td th:text="${trade.counterParty1}"></td>
             <td th:text="${trade.counterParty2}"></td>
@@ -51,6 +51,26 @@
         </tr>
         </tbody>
     </table>
-
+    <h1></h1>
+    <h1></h1>
+    <h1></h1>
+    <h1></h1>
+    <h1></h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Current page</th>
+            <th>Total page</th>
+            <th>Page size</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${pageInfo.pageNum}"></td>
+            <td th:text="${pageInfo.totalPages}"></td>
+            <td th:text="${pageInfo.pageSize}"></td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>
