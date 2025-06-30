@@ -28,4 +28,11 @@ public class AdminController {
         model.addAttribute("transaction", data);
         return "viewAllBondTransactions";
     }
+
+    @GetMapping("/viewTransactionsHistory/{tradeId}")
+    public String getTransactionsHistory(Model model, @PathVariable String tradeId) {
+        List<BondTransactionVO> data = transactionQueryService.loadTransactionsHistory(tradeId);
+        model.addAttribute("transaction", data);
+        return "viewAllBondTransactions";
+    }
 }

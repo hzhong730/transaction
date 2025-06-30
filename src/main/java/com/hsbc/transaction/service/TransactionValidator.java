@@ -18,6 +18,9 @@ public class TransactionValidator {
         if (data.getCounterParty2() == null || data.getCounterParty2().isBlank()) {
             validationResult.add("Counterparty 2 is empty");
         }
+        if (data.getCounterParty1().equals(data.getCounterParty2())) {
+            validationResult.add("Counterparties are same");
+        }
         if (!"BOND".equals(data.getType())) {
             validationResult.add("Sorry, BOND is the only type supported now");
         }

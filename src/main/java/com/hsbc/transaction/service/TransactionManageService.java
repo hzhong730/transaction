@@ -50,7 +50,7 @@ public class TransactionManageService {
             transactionRepository.update(data);
         } catch (Exception e) {
             logger.error("Transaction update failed", e);
-            ResultVO.buildFailure(e.getMessage());
+            return ResultVO.buildFailure(e.getMessage());
         }
         return ResultVO.buildSuccess();
     }
@@ -60,7 +60,7 @@ public class TransactionManageService {
             transactionRepository.delete(tradeId);
         } catch (Exception e) {
             logger.error("Transaction delete failed", e);
-            ResultVO.buildFailure(e.getMessage());
+            return ResultVO.buildFailure(e.getMessage());
         }
         return ResultVO.buildSuccess();
     }

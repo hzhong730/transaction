@@ -16,6 +16,7 @@ public class BondTransactionVO {
     private final String createdOn;
     private final String updatedOn;
     private final String version;
+    private final String deleted;
 
     public BondTransactionVO (TransactionDTO data, DateFormat dataFormat) {
         this.tradeID = data.getTradeID();
@@ -26,9 +27,10 @@ public class BondTransactionVO {
         this.price = String.valueOf(data.getPrice());
         this.amount = String.valueOf(data.getAmount());
         this.direction = data.getDirection();
-        this.createdOn = dataFormat.format(data.getCreatedOn());
-        this.updatedOn = dataFormat.format(data.getUpdatedOn());
+        this.createdOn = null==data.getCreatedOn()?"":dataFormat.format(data.getCreatedOn());
+        this.updatedOn = null==data.getUpdatedOn()?"":dataFormat.format(data.getUpdatedOn());
         this.version = String.valueOf(data.getVersion());
+        this.deleted = data.isDeleted()?"Y":"N";
     }
 
     public String getTradeID() {
@@ -73,5 +75,9 @@ public class BondTransactionVO {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getDeleted() {
+        return deleted;
     }
 }

@@ -34,6 +34,8 @@ public class TransactionRepository implements TransactionRepositoryInterface {
 
     @Override
     public TransactionDTO insert(TransactionDTO data) {
+        //TODO how to define a duplicated transaction exists already is unknown,
+        // 2 customers can keep trading a product with same price and amount
         data.setId(UUID.randomUUID().toString());
         data.setTradeID(UUID.randomUUID().toString());
         data.setCreatedOn(new Date());

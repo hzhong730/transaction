@@ -30,6 +30,8 @@
             <th>Direction</th>
             <th>Created On</th>
             <th>Updated On</th>
+            <th>Version</th>
+            <th>Deleted</th>
         </tr>
         </thead>
         <tbody>
@@ -44,6 +46,8 @@
             <td th:text="${trade.direction}"></td>
             <td th:text="${trade.createdOn}"></td>
             <td th:text="${trade.updatedOn}"></td>
+            <td th:text="${trade.version}"></td>
+            <td th:text="${trade.deleted}"></td>
         </tr>
         </tbody>
     </table>
