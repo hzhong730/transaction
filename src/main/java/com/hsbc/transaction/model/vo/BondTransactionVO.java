@@ -15,6 +15,7 @@ public class BondTransactionVO {
     private final String direction;
     private final String createdOn;
     private final String updatedOn;
+    private final String version;
 
     public BondTransactionVO (TransactionDTO data, DateFormat dataFormat) {
         this.tradeID = data.getTradeID();
@@ -27,6 +28,7 @@ public class BondTransactionVO {
         this.direction = data.getDirection();
         this.createdOn = dataFormat.format(data.getCreatedOn());
         this.updatedOn = dataFormat.format(data.getUpdatedOn());
+        this.version = String.valueOf(data.getVersion());
     }
 
     public String getTradeID() {
@@ -67,5 +69,9 @@ public class BondTransactionVO {
 
     public String getUpdatedOn() {
         return updatedOn;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

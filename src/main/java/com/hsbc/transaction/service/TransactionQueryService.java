@@ -1,6 +1,5 @@
 package com.hsbc.transaction.service;
 
-import com.hsbc.transaction.model.TransactionDTO;
 import com.hsbc.transaction.model.vo.BondTransactionVO;
 import com.hsbc.transaction.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,16 @@ public class TransactionQueryService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public List<BondTransactionVO> loadAllBondTransactions() {
-        return  transactionRepository.getAllTransactions().stream()
+    public List<BondTransactionVO> loadAllTransactions(String type) {
+        //TODO enrich BOND product info like coupon, start, maturity with Product service
+        return  transactionRepository.getAllTransactionsByType(type).stream()
                 .map(r->new BondTransactionVO(r, dateFormat)).toList();
     }
+
+    public List<BondTransactionVO> loadTransactionsByCustomer(String customer) {
+        return  transactionRepository.getAllTransactionsByCustomer(customer).stream()
+                .map(r->new BondTransactionVO(r, dateFormat)).toList();
+    }
+
+
 }

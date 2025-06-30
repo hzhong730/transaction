@@ -5,15 +5,129 @@ import com.hsbc.transaction.model.TransactionDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
-public class TransactionRepository {
+public class TransactionRepository implements TransactionRepositoryInterface {
     //as we don't need to store data to db, write a repository class to simulate spring data
+    private final List<TransactionDTO> dbStore = new CopyOnWriteArrayList<>();
+    //simulate trade id level lock
+    private final Map<String, Object> tradeIdLevelLock = new ConcurrentHashMap<>();
 
-    private final List<TransactionDTO> dbStore = new ArrayList<>();
+    @Override
+    public List<TransactionDTO> getAllTransactionsByType(String type) {
+        return dbStore.stream().filter(r->!r.isDeleted()).filter(DataEntity::isLatest)
+                .filter(r->type.equalsIgnoreCase(r.getType())).toList();
+    }
+
+    @Override
+    public List<TransactionDTO> getAllTransactionsByCustomer(String customer) {
+        return dbStore.stream().filter(r->!r.isDeleted()).filter(DataEntity::isLatest)
+                .filter(r->customer.equalsIgnoreCase(r.getCounterParty1())
+                        || customer.equalsIgnoreCase(r.getCounterParty2())).toList();
+    }
+
+    @Override
+    public TransactionDTO insert(TransactionDTO data) {
+        data.setId(UUID.randomUUID().toString());
+        data.setTradeID(UUID.randomUUID().toString());
+        data.setCreatedOn(new Date());
+        data.setUpdatedOn(data.getCreatedOn());
+        data.setVersion(1);
+        data.setDeleted(false);
+        data.setLatest(true);
+        dbStore.add(data);
+        return data;
+    }
+
+    @Override
+    public TransactionDTO getActiveData(String tradeId) {
+        return dbStore.stream().filter(r->tradeId.equals(r.getTradeID()))
+                .filter(r->!r.isDeleted()).filter(DataEntity::isLatest)
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    public List<TransactionDTO> getDataHistory(String tradeId) {
+        return dbStore.stream().filter(r->tradeId.equals(r.getTradeID())).toList();
+    }
+
+    @Override
+    public TransactionDTO update(TransactionDTO data) {
+        Object lock = tradeIdLevelLock.computeIfAbsent(data.getTradeID(), k -> new Object());
+        synchronized (lock) {
+            try {
+                updateInDB(data);
+            } finally {
+                tradeIdLevelLock.remove(data.getTradeID());
+            }
+        }
+        return data;
+    }
+
+    private void updateInDB(TransactionDTO data) {
+        TransactionDTO dataInDB = getActiveData(data.getTradeID());
+        if (null == dataInDB) {
+            String msg = String.format("Transaction %s doesn't exist in DB", data.getTradeID());
+            throw new RuntimeException(msg);
+        }
+        if (dataInDB.isDeleted()) {
+            String msg = String.format("Transaction %s is deleted", data.getTradeID());
+            throw new RuntimeException(msg);
+        }
+        dataInDB.setLatest(false);
+        data.setLatest(true);
+        data.setId(UUID.randomUUID().toString());
+        data.setCreatedOn(dataInDB.getCreatedOn());
+        data.setUpdatedOn(new Date());
+        data.setVersion(dataInDB.getVersion() + 1);
+        dbStore.add(data);
+    }
+
+    @Override
+    public void delete(String tradeId) {
+        TransactionDTO dataInDB = getActiveData(tradeId);
+        if (null == dataInDB) {
+            String msg = String.format("Transaction %s doesn't exist in DB", tradeId);
+            throw new RuntimeException(msg);
+        }
+        if (dataInDB.isDeleted()) {
+            String msg = String.format("Transaction %s is already deleted", tradeId);
+            throw new RuntimeException(msg);
+        }
+        dataInDB.setLatest(false);
+        TransactionDTO copiedData = copy(dataInDB);
+        copiedData.setId(UUID.randomUUID().toString());
+        copiedData.setDeleted(true);
+        copiedData.setLatest(true);
+        copiedData.setVersion(dataInDB.getVersion() + 1);
+        copiedData.setUpdatedOn(new Date());
+        dbStore.add(copiedData);
+    }
+
+    private TransactionDTO copy(TransactionDTO original) {
+        TransactionDTO copy = new TransactionDTO();
+        copy.setId(original.getId());
+        copy.setTradeID(original.getTradeID());
+        copy.setType(original.getType());
+        copy.setProductId(original.getProductId());
+        copy.setAmount(original.getAmount());
+        copy.setPrice(original.getPrice());
+        copy.setDirection(original.getDirection());
+        copy.setCounterParty1(original.getCounterParty1());
+        copy.setCounterParty2(original.getCounterParty2());
+        copy.setVersion(original.getVersion());
+        copy.setCreatedOn(original.getCreatedOn());
+        copy.setUpdatedOn(original.getUpdatedOn());
+        copy.setDeleted(original.isDeleted());
+        copy.setLatest(original.isLatest());
+        return copy;
+    }
 
     @PostConstruct
     public void init() {
@@ -32,9 +146,5 @@ public class TransactionRepository {
         historyData1.setCreatedOn(new Date());
         historyData1.setUpdatedOn(historyData1.getCreatedOn());
         dbStore.add(historyData1);
-    }
-
-    public List<TransactionDTO> getAllTransactions() {
-        return dbStore.stream().filter(r->!r.isDeleted()).filter(DataEntity::isLatest).toList();
     }
 }
