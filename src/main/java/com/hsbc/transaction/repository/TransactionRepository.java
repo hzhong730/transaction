@@ -2,7 +2,9 @@ package com.hsbc.transaction.repository;
 
 import com.hsbc.transaction.model.DataEntity;
 import com.hsbc.transaction.model.TransactionDTO;
+import com.hsbc.transaction.service.TransactionCacheService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -18,6 +20,15 @@ public class TransactionRepository implements TransactionRepositoryInterface {
     private final List<TransactionDTO> dbStore = new CopyOnWriteArrayList<>();
     //simulate trade id level lock
     private final Map<String, Object> tradeIdLevelLock = new ConcurrentHashMap<>();
+
+    @Autowired
+    private TransactionCacheService transactionCacheService;
+
+    @Override
+    public List<TransactionDTO> getAllTransactions() {
+        return dbStore.stream().filter(r->!r.isDeleted()).filter(DataEntity::isLatest)
+                .toList();
+    }
 
     @Override
     public List<TransactionDTO> getAllTransactionsByType(String type) {
@@ -44,6 +55,7 @@ public class TransactionRepository implements TransactionRepositoryInterface {
         data.setDeleted(false);
         data.setLatest(true);
         dbStore.add(data);
+        transactionCacheService.addTransactionCache(data);
         return data;
     }
 
@@ -89,6 +101,7 @@ public class TransactionRepository implements TransactionRepositoryInterface {
         data.setUpdatedOn(new Date());
         data.setVersion(dataInDB.getVersion() + 1);
         dbStore.add(data);
+        transactionCacheService.updateTransactionCache(data, dataInDB);
     }
 
     @Override
@@ -110,6 +123,7 @@ public class TransactionRepository implements TransactionRepositoryInterface {
         copiedData.setVersion(dataInDB.getVersion() + 1);
         copiedData.setUpdatedOn(new Date());
         dbStore.add(copiedData);
+        transactionCacheService.deleteTransactionCache(dataInDB);
     }
 
     private TransactionDTO copy(TransactionDTO original) {

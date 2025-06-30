@@ -5,6 +5,7 @@ import com.hsbc.transaction.model.TransactionDTO;
 import java.util.List;
 
 public interface TransactionRepositoryInterface {
+    List<TransactionDTO> getAllTransactions();
     List<TransactionDTO> getAllTransactionsByType(String type);
     List<TransactionDTO> getAllTransactionsByCustomer(String customer);
     TransactionDTO insert(TransactionDTO data);
