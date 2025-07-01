@@ -23,6 +23,7 @@ public class TransactionCacheServiceTest {
         Assertions.assertEquals(3, target.getTransactionsFromCache("BOND").size());
         Assertions.assertEquals(2,target.getTransactionsFromCacheByCustomer("C").size());
         Assertions.assertEquals(1,target.getTransactionsFromCacheByCustomer("B").size());
+        Assertions.assertEquals("main cache size 3, customer cache size 4", target.monitor());
     }
 
     private List<TransactionDTO> prepareInitData() {
@@ -48,6 +49,7 @@ public class TransactionCacheServiceTest {
         Assertions.assertEquals(3, target.getTransactionsFromCacheByCustomer("C").size());
         Assertions.assertEquals(3, target.getTransactionsFromCacheByCustomer("D").size());
         Assertions.assertEquals(1, target.getTransactionsFromCacheByCustomer("A").size());
+        Assertions.assertEquals("main cache size 4, customer cache size 4", target.monitor());
     }
 
     @Test
@@ -65,6 +67,7 @@ public class TransactionCacheServiceTest {
         Assertions.assertEquals(1, target.getTransactionsFromCacheByCustomer("X").size());
         Assertions.assertEquals(1, target.getTransactionsFromCacheByCustomer("Y").size());
         Assertions.assertEquals("300", target.getByTradeId(update1.getTradeID()).getAmount());
+        Assertions.assertEquals("main cache size 3, customer cache size 6", target.monitor());
     }
 
     @Test
@@ -76,5 +79,6 @@ public class TransactionCacheServiceTest {
         Assertions.assertEquals(1, target.getTransactionsFromCacheByCustomer("C").size());
         Assertions.assertEquals(1, target.getTransactionsFromCacheByCustomer("D").size());
         Assertions.assertNull(target.getByTradeId(dbData.get(0).getTradeID()));
+        Assertions.assertEquals("main cache size 2, customer cache size 4", target.monitor());
     }
 }

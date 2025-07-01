@@ -118,7 +118,7 @@ public class TransactionRepository implements TransactionRepositoryInterface {
         transactionCacheService.deleteTransactionCache(dataInDB);
     }
 
-    private TransactionDTO copy(TransactionDTO original) {
+    public static TransactionDTO copy(TransactionDTO original) {
         TransactionDTO copy = new TransactionDTO();
         copy.setId(original.getId());
         copy.setTradeID(original.getTradeID());
@@ -154,5 +154,9 @@ public class TransactionRepository implements TransactionRepositoryInterface {
         historyData1.setCreatedOn(new Date());
         historyData1.setUpdatedOn(historyData1.getCreatedOn());
         dbStore.add(historyData1);
+    }
+
+    public String monitor() {
+        return String.format("DB size %s, lock size %s", dbStore.size(), tradeIdLevelLock.size());
     }
 }

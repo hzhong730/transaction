@@ -92,4 +92,9 @@ public class TransactionCacheService {
         customersTradeCache.getOrDefault(data.getCounterParty1(), new HashSet<>()).remove(data.getTradeID());
         customersTradeCache.getOrDefault(data.getCounterParty2(), new HashSet<>()).remove(data.getTradeID());
     }
+
+    public String monitor() {
+        return String.format("main cache size %s, customer cache size %s",
+                bondTransactionCache.size(), customersTradeCache.size());
+    }
 }

@@ -38,6 +38,7 @@ public class TransactionRepositoryTest {
         Assertions.assertEquals(1, target.getAllTransactionsByCustomer("A").size());
         Assertions.assertEquals(4, target.getAllTransactionsByType("BOND").size());
         Assertions.assertEquals(d3, target.getActiveData(d3.getTradeID()));
+        Assertions.assertEquals("DB size 4, lock size 0", target.monitor());
     }
 
     @Test
@@ -50,6 +51,7 @@ public class TransactionRepositoryTest {
         target.update(d1updated);
         Assertions.assertEquals(50L, target.getActiveData(d1.getTradeID()).getAmount());
         Assertions.assertEquals(2, target.getDataHistory(d1.getTradeID()).size());
+        Assertions.assertEquals("DB size 3, lock size 0", target.monitor());
     }
 
     @Test
@@ -59,6 +61,7 @@ public class TransactionRepositoryTest {
         target.delete(d1.getTradeID());
         Assertions.assertNull(target.getActiveData(d1.getTradeID()));
         Assertions.assertEquals(2, target.getDataHistory(d1.getTradeID()).size());
+        Assertions.assertEquals("DB size 3, lock size 0", target.monitor());
     }
 
     @Test
@@ -67,6 +70,7 @@ public class TransactionRepositoryTest {
         target.insert(d1);
         TransactionDTO d1updated = TransactionDTOTestUtils.aTransaction("BOND", "otherID");
         Assertions.assertThrows(Exception.class, ()->{target.update(d1updated);});
+        Assertions.assertEquals("DB size 2, lock size 0", target.monitor());
     }
 
     @Test
@@ -74,5 +78,6 @@ public class TransactionRepositoryTest {
         TransactionDTO d1 = TransactionDTOTestUtils.aTransaction("BOND", "a001");
         target.insert(d1);
         Assertions.assertThrows(Exception.class, ()->{target.delete("Other");});
+        Assertions.assertEquals("DB size 2, lock size 0", target.monitor());
     }
 }
