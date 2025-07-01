@@ -45,6 +45,10 @@ public class TransactionCacheService {
                 .toList();
     }
 
+    public BondTransactionVO getByTradeId(String tradeID) {
+        return bondTransactionCache.get(tradeID);
+    }
+
     private void putToCache(TransactionDTO dto) {
         BondTransactionVO vo = new BondTransactionVO(dto, dateFormat);
         putVoToCache(vo);

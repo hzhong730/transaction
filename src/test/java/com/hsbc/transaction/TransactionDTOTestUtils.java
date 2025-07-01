@@ -1,7 +1,10 @@
 package com.hsbc.transaction;
 
 import com.hsbc.transaction.model.TransactionDTO;
+import com.hsbc.transaction.model.vo.BondTransactionVO;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TransactionDTOTestUtils {
@@ -18,5 +21,11 @@ public class TransactionDTOTestUtils {
         data.setPrice(96d);
         data.setAmount(100L);
         return  data;
+    }
+
+    public static BondTransactionVO aTransactionVo(String type, String id) {
+        TransactionDTO data = aTransaction(type, id);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        return new BondTransactionVO(data, dateFormat);
     }
 }

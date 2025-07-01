@@ -3,13 +3,13 @@ package com.hsbc.transaction.service;
 import com.hsbc.transaction.model.TransactionDTO;
 import com.hsbc.transaction.model.vo.ResultVO;
 import com.hsbc.transaction.repository.TransactionRepository;
+import com.hsbc.transaction.service.validator.TransactionValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionManageService {

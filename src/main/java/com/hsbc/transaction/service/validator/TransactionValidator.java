@@ -1,4 +1,4 @@
-package com.hsbc.transaction.service;
+package com.hsbc.transaction.service.validator;
 
 import com.hsbc.transaction.model.TransactionDTO;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TransactionValidator {
+public class TransactionValidator implements DataValidator<TransactionDTO> {
     //TODO use spring validation annotation in the future to reduce code
 
     public List<String> validateTransactionDTO(TransactionDTO data) {
@@ -18,7 +18,7 @@ public class TransactionValidator {
         if (data.getCounterParty2() == null || data.getCounterParty2().isBlank()) {
             validationResult.add("Counterparty 2 is empty");
         }
-        if (data.getCounterParty1().equals(data.getCounterParty2())) {
+        if (data.getCounterParty1() != null && data.getCounterParty1().equals(data.getCounterParty2())) {
             validationResult.add("Counterparties are same");
         }
         if (!"BOND".equals(data.getType())) {

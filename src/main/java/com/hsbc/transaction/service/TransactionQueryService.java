@@ -18,9 +18,9 @@ public class TransactionQueryService implements SmartInitializingSingleton {
     private static final Logger logger = LoggerFactory.getLogger(TransactionQueryService.class);
     @Autowired
     private TransactionRepository transactionRepository;
-
     @Autowired
     private TransactionCacheService cacheService;
+
     public List<BondTransactionVO> loadAllTransactions(String type) {
         //TODO enrich BOND product info like coupon, start, maturity with Product service
         List<BondTransactionVO> cached = cacheService.getTransactionsFromCache(type);
