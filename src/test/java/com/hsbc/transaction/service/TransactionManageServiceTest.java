@@ -43,6 +43,7 @@ public class TransactionManageServiceTest {
         Mockito.when(transactionValidator.validateTransactionDTO(data)).thenReturn(new ArrayList<>());
         ResultVO result = target.add(data);
         Assertions.assertEquals(ResultVO.SUCCESS, result.getResult());
+        Assertions.assertEquals("t01", result.getMessage());
     }
 
     @Test

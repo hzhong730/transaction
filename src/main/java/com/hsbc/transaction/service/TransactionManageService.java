@@ -32,7 +32,7 @@ public class TransactionManageService {
             logger.error("Transaction Insert failed", e);
             ResultVO.buildFailure(e.getMessage());
         }
-        return ResultVO.buildSuccess();
+        return ResultVO.buildSuccessWithTradeId(data.getTradeID());
     }
 
     public ResultVO update(TransactionDTO data) {

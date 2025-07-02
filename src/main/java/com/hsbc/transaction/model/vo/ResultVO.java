@@ -21,6 +21,13 @@ public class ResultVO {
         return vo;
     }
 
+    public static ResultVO buildSuccessWithTradeId(String id) {
+        ResultVO vo = new ResultVO();
+        vo.result = SUCCESS;
+        vo.message = id;
+        return vo;
+    }
+
     public static ResultVO buildInvalid(String message) {
         ResultVO vo = new ResultVO();
         vo.message = message;
