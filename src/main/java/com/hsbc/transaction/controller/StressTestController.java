@@ -5,6 +5,7 @@ import com.hsbc.transaction.model.vo.ResultVO;
 import com.hsbc.transaction.repository.TransactionRepository;
 import com.hsbc.transaction.service.TransactionCacheService;
 import com.hsbc.transaction.service.TransactionManageService;
+import com.hsbc.transaction.tools.TransactionThreadPool;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StressTestController {
     @Autowired
     private  TransactionCacheService transactionCacheService;
 
-
+    private TransactionThreadPool transactionThreadPool;
 
     @PostConstruct
     public void init() {
@@ -39,6 +40,7 @@ public class StressTestController {
         prices.add(95.0);
         prices.add(97.0);
         prices.add(99.0);
+        transactionThreadPool = new TransactionThreadPool(4, 100);
     }
 
     @PostMapping("/addData/{number}")
@@ -46,15 +48,18 @@ public class StressTestController {
                                    @RequestParam String user) {
         if (!"hzhong730".equals(user))
             return ResultVO.buildFailure("this user is not allowed to run stress test mode");
+        Runnable r = () -> {
         for (int i=0;i<number;i++) {
-            TransactionDTO copy = TransactionRepository.copy(transactionTemplate);
-            copy.setId(null);
-            copy.setTradeID(null);
-            copy.setDirection(directions.get(i % 2));
-            copy.setAmount(amounts.get(i % 3));
-            copy.setPrice(prices.get(i % 4));
-            transactionManageService.add(copy);
-        }
+                TransactionDTO copy = TransactionRepository.copy(transactionTemplate);
+                copy.setId(null);
+                copy.setTradeID(null);
+                copy.setDirection(directions.get(i % 2));
+                copy.setAmount(amounts.get(i % 3));
+                copy.setPrice(prices.get(i % 4));
+                transactionManageService.add(copy);
+            };
+        };
+        transactionThreadPool.execute(r);
         return ResultVO.buildSuccess();
     }
 
